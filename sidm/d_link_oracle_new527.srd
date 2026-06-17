@@ -1,0 +1,85 @@
+release 9;
+datawindow(units=0 timer_interval=0 color=1073741824 processing=1 HTMLDW=no print.printername="" print.documentname="" print.orientation = 0 print.margin.left = 110 print.margin.right = 110 print.margin.top = 96 print.margin.bottom = 96 print.paper.source = 0 print.paper.size = 0 print.canusedefaultprinter=yes print.prompt=no print.buttons=no print.preview.buttons=no print.cliptext=no print.overrideprintjob=no print.collate=yes hidegrayline=no grid.lines=0 grid.columnmove=no selected.mouse=no )
+header(height=120 color="536870912" )
+summary(height=0 color="536870912" )
+footer(height=0 color="536870912" )
+detail(height=88 color="536870912" )
+table(column=(type=char(19) updatewhereclause=yes name=sysd dbname="sysd" )
+ column=(type=char(4000) updatewhereclause=yes name=sid_xs dbname="sid_xs" )
+ column=(type=char(30) updatewhereclause=yes name=machine dbname="v$session.machine" )
+ column=(type=char(48) updatewhereclause=yes name=program dbname="v$session.program" )
+ column=(type=char(30) updatewhereclause=yes name=username dbname="v$session.username" )
+ column=(type=char(128) updatewhereclause=yes name=object_name dbname="dba_objects.object_name" )
+ column=(type=char(64) updatewhereclause=yes name=wait_class dbname="v$session.wait_class" )
+ column=(type=number updatewhereclause=yes name=ms dbname="v$session.seconds_in_wait" )
+ column=(type=char(1000) updatewhereclause=yes name=sql_text dbname="sql_text" )
+ column=(type=char(161) updatewhereclause=yes name=kill_sql dbname="kill_sql" )
+ column=(type=char(1) updatewhereclause=yes name=bzxx dbname="bzxx" )
+ column=(type=char(40) updatewhereclause=yes name=sid dbname="sid" )
+ column=(type=number updatewhereclause=yes name=lv dbname="lv" )
+ retrieve="select to_char(sysdate, 'yyyy-mm-dd hh:mm:ss') sysd, 
+	lpad('├', 4 * (lv - 1)) || to_char(a.sid) || ',' || to_char(a.sess_serial#) sid_xs,
+	b.TERMINAL machine, b.PROGRAM, b.USERNAME, d.object_name, 
+	b.WAIT_CLASS, 
+	b.SECONDS_IN_WAIT, 
+/*	to_char(TRUNC(b.SECONDS_IN_WAIT / (3600 * 24))) || '天' || to_char(TRUNC(MOD(b.SECONDS_IN_WAIT, (3600 * 24)) / 3600), '00') || '小时' || 
+		to_char(TRUNC(MOD(b.SECONDS_IN_WAIT, (3600)) / 60), '00') || '分' || to_char(TRUNC(MOD(b.SECONDS_IN_WAIT, (60)) / 1), '00') || '秒' ms_xs, */
+	e.sql_text, 
+	CASE 
+		WHEN a.blocker_instance IS NOT NULL THEN ''
+		ELSE 'alter system kill session ''' || a.sid || ',' || a.sess_serial# || ',@' || a.instance || ''' immediate' 
+	END as kill_sql, 
+	' ' BZXX, 
+	to_char(a.sid) sid,
+	a.lv 
+/*	a.instance, a.sid, a.sess_serial#,
+	a.blocker_instance, a.blocker_sid, a.blocker_sess_serial#*/
+FROM (select ROWNUM JLXH, a.* from 
+		(select instance, sid, sess_serial#, blocker_instance,
+			blocker_sid, blocker_sess_serial#, level lv,
+			num_waiters, blocker_chain_id
+		from v$wait_chains
+			connect by prior sid = blocker_sid
+			and prior sess_serial# = blocker_sess_serial#
+			and prior instance = blocker_instance
+			start with blocker_is_valid = 'FALSE' 
+			/*AND CHAIN_SIGNATURE NOT LIKE '%log file sync%'*/
+		) a
+		where num_waiters > 0 or blocker_sid is not null
+	) a, V$SESSION b 
+	LEFT JOIN v$locked_object c ON b.sid = c.session_id
+	LEFT JOIN dba_objects d ON c.object_id = d.object_id
+	LEFT JOIN V$SQLAREA e ON e.HASH_VALUE = b.SQL_HASH_VALUE 
+WHERE a.sid = b.sid 
+ORDER BY a.JLXH
+" )
+text(band=header alignment="2" text="客户端" border="0" color="0" x="1170" y="36" height="56" width="485" html.valueishtml="0"  name=machine_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="0" text="应用" border="0" color="0" x="1664" y="36" height="56" width="475" html.valueishtml="0"  name=program_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="登录用户" border="0" color="0" x="2149" y="36" height="56" width="425" html.valueishtml="0"  name=username_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="对象" border="0" color="0" x="2583" y="36" height="56" width="521" html.valueishtml="0"  name=object_name_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="等待类型" border="0" color="0" x="3113" y="36" height="56" width="398" html.valueishtml="0"  name=class_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="结束进程语法" border="0" color="0" x="6816" y="36" height="56" width="1321" html.valueishtml="0"  name=kill_sql_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="会话树" border="0" color="0" x="599" y="36" height="56" width="562" html.valueishtml="0"  name=sid_xs_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="时间" border="0" color="33554432" x="9" y="36" height="56" width="581" html.valueishtml="0"  name=sysd_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+text(band=header alignment="2" text="执行的SQL" border="0" color="0" x="3803" y="36" height="56" width="2551" html.valueishtml="0"  name=sql_text_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="备注信息" border="0" color="0" x="6363" y="36" height="56" width="443" html.valueishtml="0"  name=bzxx_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="持续/
+等待(秒)" border="0" color="0" x="3520" y="4" height="112" width="238" html.valueishtml="0"  name=ms_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+column(band=detail id=3 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="1170" y="16" height="64" width="485" format="[general]" html.valueishtml="0"  name=machine visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=4 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="1664" y="16" height="64" width="475" format="[general]" html.valueishtml="0"  name=program visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=5 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="2149" y="16" height="64" width="425" format="[general]" html.valueishtml="0"  name=username visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=6 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="2583" y="16" height="64" width="521" format="[general]" html.valueishtml="0"  name=object_name visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+compute(band=detail alignment="0" expression="''"border="0" color="33554432" x="3767" y="16" height="64" width="27" format="[GENERAL]" html.valueishtml="0"  name=compute_1 visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=2 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="599" y="16" height="64" width="562" format="[general]" html.valueishtml="0"  name=sid_xs visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=1 alignment="2" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="9" y="16" height="64" width="581" format="[general]" html.valueishtml="0"  name=sysd visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=9 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="3803" y="16" height="64" width="2551" format="[general]" html.valueishtml="0"  name=sql_text visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=11 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="6363" y="16" height="64" width="443" format="[general]" html.valueishtml="0"  name=bzxx visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=10 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="6816" y="16" height="64" width="1321" format="[general]" html.valueishtml="0"  name=kill_sql visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=7 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="3113" y="16" height="64" width="398" format="[general]" html.valueishtml="0"  name=wait_class visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=8 alignment="1" tabsequence=32766 border="0" color="0~tif(lv = 1, rgb(0, 0, 255), 255)" x="3520" y="16" height="64" width="238" format="[general]" html.valueishtml="0"  name=ms visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="2" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+htmltable(border="1" )
+htmlgen(clientevents="1" clientvalidation="1" clientcomputedfields="1" clientformatting="0" clientscriptable="0" generatejavascript="1" encodeselflinkargs="1" netscapelayers="0" )
+export.xml(headgroups="1" includewhitespace="0" metadatatype=0 savemetadata=0 )
+import.xml()
+export.pdf(method=0 distill.custompostscript="0" xslfop.print="0" )
+ 

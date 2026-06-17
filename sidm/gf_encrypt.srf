@@ -1,0 +1,17 @@
+global type gf_encrypt from function_object
+end type
+
+forward prototypes
+global function string gf_encrypt (string as_sour, string as_key)
+end prototypes
+
+global function string gf_encrypt (string as_sour, string as_key);//º”√‹
+string ls_tmp
+
+if as_key = "" then as_key = "RiChArD"
+ls_tmp = space(512)
+des(as_sour, as_key, ls_tmp, 1)
+return ls_tmp
+
+end function
+

@@ -1,0 +1,44 @@
+global type gf_connect from function_object
+end type
+
+forward prototypes
+global function boolean gf_connect ()
+end prototypes
+
+global function boolean gf_connect ();string ls_ini, ls_dbms, ls_servername, ls_database, ls_logid, ls_logpass, ls_dbparm
+string ls_computername 
+int li_autocommit
+
+ls_ini  = "sidm.ini"
+ls_dbms = profilestring(ls_ini,"database","dbms","")
+ls_servername = gf_decrypt(profilestring(ls_ini,"database","servername",""), "servername")
+ls_database = gf_decrypt(profilestring(ls_ini,"database","database",""), "database")
+ls_logid = gf_decrypt(profilestring(ls_ini,"database","logid",""), "logid")
+ls_logpass = gf_decrypt(profilestring(ls_ini,"database","logpass",""), "logpass")
+li_autocommit = integer(profilestring(ls_ini,"database","autocommit",""))
+ls_dbparm = gf_decrypt(profilestring(ls_ini,"database","dbparm",""), "dbparm")
+sqlca.dbms = ls_dbms
+sqlca.servername = ls_servername
+sqlca.database = ls_database
+sqlca.logid = ls_logid
+sqlca.logpass = ls_logpass
+if li_autocommit = 1 then
+	sqlca.autocommit = true
+else
+	sqlca.autocommit = false
+end if
+if upper(sqlca.dbms) = "OLE DB" then 
+	sqlca.dbparm = "DATASOURCE='" + sqlca.ServerName + &
+		"',PROVIDERSTRING='database=" + sqlca.Database + "'"
+	sqlca.lock = "RC"
+end if
+if ls_dbparm = "" or isnull(ls_dbparm) then 
+	sqlca.dbparm += ",host='" + ls_computername + "',appname='SIDM'"  
+else
+	sqlca.dbparm += "," + ls_dbparm + ",host='" + ls_computername + "',appname='SIDM'"
+end if
+connect;
+return (sqlca.sqlcode = 0)
+
+end function
+

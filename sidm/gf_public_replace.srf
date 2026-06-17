@@ -1,0 +1,25 @@
+global type gf_public_replace from function_object
+end type
+
+forward prototypes
+global function string gf_public_replace (string assource, string asfrom, string asto)
+end prototypes
+
+global function string gf_public_replace (string assource, string asfrom, string asto);//
+//  ¹¦ÄÜ:×Ö·û´®Ìæ»»
+//  Èë²Î:asSource	Ô´×Ö·û´®
+//			asFrom		ÐèÌæ»»×Ö·û´®
+//			asTo			Ìæ»»³ÉµÄ×Ö·û´®
+//
+
+Long	llPos = 1
+
+llPos = Pos(asSource, asFrom, llPos)
+Do While llPos > 0
+	asSource = Replace(asSource, llPos, Len(asFrom), asTo)
+	llPos = Pos(asSource, asFrom, llPos + Len(asTo))
+Loop
+
+Return asSource
+end function
+

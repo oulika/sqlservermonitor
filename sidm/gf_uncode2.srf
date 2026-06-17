@@ -1,0 +1,17 @@
+global type gf_uncode2 from function_object
+end type
+
+forward prototypes
+global function string gf_uncode2 (string as_string)
+end prototypes
+
+global function string gf_uncode2 (string as_string);long ll_i, ll_code2
+string ls_text
+FOR Ll_I=1 TO LEN(as_string)
+	LL_CODE2=ASC(MID(as_string,LL_I,1)) + 20
+	LS_TEXT = ls_text + CHAR(LL_CODE2)
+NEXT
+return ls_text
+
+end function
+

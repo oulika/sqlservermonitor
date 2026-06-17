@@ -1,0 +1,18 @@
+global type gf_isconnect from function_object
+end type
+
+forward prototypes
+global function boolean gf_isconnect ()
+end prototypes
+
+global function boolean gf_isconnect ();int li_temp
+
+if upper(SQLCA.dbms) = "O90 ORACLE9I (9.0.1)" then 
+	select count(*) into :li_temp from dual;
+else
+//	select count(*) into :li_temp from master..sysprocesses;
+end if
+return (sqlca.sqlcode  = 0)
+
+end function
+

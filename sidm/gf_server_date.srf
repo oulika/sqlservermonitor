@@ -1,0 +1,21 @@
+global type gf_server_date from function_object
+end type
+
+forward prototypes
+global function datetime gf_server_date ()
+end prototypes
+
+global function datetime gf_server_date ();//取服务器时间
+//入口参数: 空
+//出口参数: datetime变量
+DATETIME ldt_server_date
+
+if pos(upper(SQLCA.DBMS), "ORACLE") > 0 then 
+	select sysdate into :ldt_server_date from dual using SQLCA;
+else
+	select getdate() into :ldt_server_date from (select '' a) a using SQLCA;
+end if
+RETURN ldt_server_date
+
+end function
+

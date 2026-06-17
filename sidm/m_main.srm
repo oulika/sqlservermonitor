@@ -1,0 +1,800 @@
+forward
+global type m_main from menu
+end type
+type m_s from menu within m_main
+end type
+type m_connect from menu within m_s
+end type
+type m_link from menu within m_s
+end type
+type m_locktest from menu within m_s
+end type
+type m_2 from menu within m_s
+end type
+type m_log from menu within m_s
+end type
+type m_sysline1 from menu within m_s
+end type
+type m_proc from menu within m_s
+end type
+type m_o_proc from menu within m_proc
+end type
+type m_u_proc from menu within m_proc
+end type
+type m_a_proc from menu within m_proc
+end type
+type m_proc from menu within m_s
+m_o_proc m_o_proc
+m_u_proc m_u_proc
+m_a_proc m_a_proc
+end type
+type m_trace from menu within m_s
+end type
+type m_ from menu within m_s
+end type
+type m_zdcs from menu within m_s
+end type
+type m_tsb from menu within m_s
+end type
+type m_xxx from menu within m_s
+end type
+type m_- from menu within m_s
+end type
+type m_exit from menu within m_s
+end type
+type m_s from menu within m_main
+m_connect m_connect
+m_link m_link
+m_locktest m_locktest
+m_2 m_2
+m_log m_log
+m_sysline1 m_sysline1
+m_proc m_proc
+m_trace m_trace
+m_ m_
+m_zdcs m_zdcs
+m_tsb m_tsb
+m_xxx m_xxx
+m_- m_-
+m_exit m_exit
+end type
+type m_bshis from menu within m_main
+end type
+type m_sswr from menu within m_bshis
+end type
+type m_bcp from menu within m_bshis
+end type
+type m_ch from menu within m_bshis
+end type
+type m_ypxx from menu within m_bshis
+end type
+type m_1 from menu within m_bshis
+end type
+type m_bshis from menu within m_main
+m_sswr m_sswr
+m_bcp m_bcp
+m_ch m_ch
+m_ypxx m_ypxx
+m_1 m_1
+end type
+type m_api from menu within m_main
+end type
+type m_close from menu within m_api
+end type
+type m_zywqh from menu within m_api
+end type
+type m_sndplay from menu within m_api
+end type
+type m_task from menu within m_api
+end type
+type m_api from menu within m_main
+m_close m_close
+m_zywqh m_zywqh
+m_sndplay m_sndplay
+m_task m_task
+end type
+type m_window from menu within m_main
+end type
+global type m_main from menu
+m_s m_s
+m_bshis m_bshis
+m_api m_api
+m_window m_window
+end type
+end forward
+
+global type m_main from menu
+m_s m_s
+m_bshis m_bshis
+m_api m_api
+m_window m_window
+end type
+global m_main m_main
+
+on m_main.create
+m_main=this
+call super::create
+this.m_s=create m_s
+this.m_bshis=create m_bshis
+this.m_api=create m_api
+this.m_window=create m_window
+this.Item[UpperBound(this.Item)+1]=this.m_s
+this.Item[UpperBound(this.Item)+1]=this.m_bshis
+this.Item[UpperBound(this.Item)+1]=this.m_api
+this.Item[UpperBound(this.Item)+1]=this.m_window
+end on
+
+on m_main.destroy
+call super::destroy
+destroy(this.m_s)
+destroy(this.m_bshis)
+destroy(this.m_api)
+destroy(this.m_window)
+end on
+
+type m_s from menu within m_main
+m_connect m_connect
+m_link m_link
+m_locktest m_locktest
+m_2 m_2
+m_log m_log
+m_sysline1 m_sysline1
+m_proc m_proc
+m_trace m_trace
+m_ m_
+m_zdcs m_zdcs
+m_tsb m_tsb
+m_xxx m_xxx
+m_- m_-
+m_exit m_exit
+end type
+
+on m_s.create
+call super::create
+this.text = "系统(&S)"
+this.m_connect=create m_connect
+this.m_link=create m_link
+this.m_locktest=create m_locktest
+this.m_2=create m_2
+this.m_log=create m_log
+this.m_sysline1=create m_sysline1
+this.m_proc=create m_proc
+this.m_trace=create m_trace
+this.m_=create m_
+this.m_zdcs=create m_zdcs
+this.m_tsb=create m_tsb
+this.m_xxx=create m_xxx
+this.m_-=create m_-
+this.m_exit=create m_exit
+this.Item[UpperBound(this.Item)+1]=this.m_connect
+this.Item[UpperBound(this.Item)+1]=this.m_link
+this.Item[UpperBound(this.Item)+1]=this.m_locktest
+this.Item[UpperBound(this.Item)+1]=this.m_2
+this.Item[UpperBound(this.Item)+1]=this.m_log
+this.Item[UpperBound(this.Item)+1]=this.m_sysline1
+this.Item[UpperBound(this.Item)+1]=this.m_proc
+this.Item[UpperBound(this.Item)+1]=this.m_trace
+this.Item[UpperBound(this.Item)+1]=this.m_
+this.Item[UpperBound(this.Item)+1]=this.m_zdcs
+this.Item[UpperBound(this.Item)+1]=this.m_tsb
+this.Item[UpperBound(this.Item)+1]=this.m_xxx
+this.Item[UpperBound(this.Item)+1]=this.m_-
+this.Item[UpperBound(this.Item)+1]=this.m_exit
+end on
+
+on m_s.destroy
+call super::destroy
+destroy(this.m_connect)
+destroy(this.m_link)
+destroy(this.m_locktest)
+destroy(this.m_2)
+destroy(this.m_log)
+destroy(this.m_sysline1)
+destroy(this.m_proc)
+destroy(this.m_trace)
+destroy(this.m_)
+destroy(this.m_zdcs)
+destroy(this.m_tsb)
+destroy(this.m_xxx)
+destroy(this.m_-)
+destroy(this.m_exit)
+end on
+
+type m_connect from menu within m_s
+end type
+
+event clicked;if not gf_isconnect() then
+	if not gf_connect() then 
+		open(w_connect)
+		if gf_isconnect() then 
+			m_main.m_s.m_link.triggerevent(clicked!)
+			m_main.m_s.m_locktest.enabled = true
+		end if
+	end if
+end if
+
+end event
+
+on m_connect.create
+call super::create
+this.text = "连接数据库"
+this.toolbaritemname = "DBConnect!"
+this.toolbaritemtext = "连接数据库"
+end on
+
+on m_connect.destroy
+call super::destroy
+end on
+
+type m_link from menu within m_s
+end type
+
+event clicked;choose case upper(SQLCA.dbms)
+	case "O90 ORACLE9I (9.0.1)" 
+		opensheet(w_link_oracle_new, parentwindow, 0, Original!)
+	case else
+		opensheet(w_link, parentwindow, 0, Original!)
+end choose
+
+end event
+
+on m_link.create
+call super::create
+this.text = "数据库进程侦测"
+this.enabled = false
+this.toolbaritemname = "Preferences!"
+this.toolbaritemtext = "数据进程侦测"
+end on
+
+on m_link.destroy
+call super::destroy
+end on
+
+type m_locktest from menu within m_s
+end type
+
+on m_locktest.create
+call super::create
+this.text = "锁测试"
+this.enabled = false
+end on
+
+on m_locktest.destroy
+call super::destroy
+end on
+
+event clicked;string ls_sql, ls_errtext
+transaction SQLTEMP
+
+ls_sql = "drop table T_trans_test;"
+execute immediate :ls_sql using SQLCA;
+ls_sql = "create table T_trans_test (trans_test numeric(10))"
+execute immediate :ls_sql using SQLCA;
+
+SQLTEMP = create transaction
+// Profile .master
+SQLTEMP.DBMS       = SQLCA.DBMS
+SQLTEMP.ServerName = SQLCA.ServerName
+SQLTEMP.Database   = SQLCA.Database
+SQLTEMP.LogPass    = SQLCA.LogPass
+SQLTEMP.LogId      = SQLCA.LogId
+SQLTEMP.AutoCommit = True
+SQLTEMP.DBParm     = SQLCA.DBParm
+connect using SQLTEMP;
+
+//delete T_trans_test using SQLCA;
+delete T_trans_test using SQLTEMP;
+sleep(1)
+insert into T_trans_test (trans_test) values (1) using SQLTEMP;
+if SQLTEMP.sqlnrows > 0 then 
+	messagebox("提示", "更新表T_trans_test后未提交")
+else
+	ls_errtext = SQLTEMP.sqlerrtext
+	messagebox("提示", "更新表T_trans_test出错，~r~n~r~n" + ls_errtext, stopsign!)
+end if
+commit using SQLTEMP;
+destroy SQLTEMP
+
+end event
+
+type m_2 from menu within m_s
+end type
+
+on m_2.create
+call super::create
+end on
+
+on m_2.destroy
+call super::destroy
+end on
+
+type m_log from menu within m_s
+end type
+
+event clicked;string ls_pathname, ls_filename
+
+if getfileopenname("选择文件", ls_pathname, ls_filename, "log", &
+	"Text Files (*.txt), *.txt," + &
+	"Excel Files (*.xls), *.xls," + &
+	"Excel Files (*.xlsx), *.xlsx" ) = 1 then
+	if right(upper(ls_pathname), 3) = 'TXT' then
+		run("notepad " + ls_pathname)
+	else
+//		run("excel " + ls_pathname)
+	end if
+end if
+
+end event
+
+on m_log.create
+call super::create
+this.text = "日志"
+this.toolbaritemname = "Custom025!"
+this.toolbaritemtext = "日志"
+end on
+
+on m_log.destroy
+call super::destroy
+end on
+
+type m_sysline1 from menu within m_s
+end type
+
+on m_sysline1.create
+call super::create
+this.text = "-"
+end on
+
+on m_sysline1.destroy
+call super::destroy
+end on
+
+type m_proc from menu within m_s
+m_o_proc m_o_proc
+m_u_proc m_u_proc
+m_a_proc m_a_proc
+end type
+
+on m_proc.create
+call super::create
+this.text = "进程"
+this.enabled = false
+this.toolbaritemvisible = false
+this.m_o_proc=create m_o_proc
+this.m_u_proc=create m_u_proc
+this.m_a_proc=create m_a_proc
+this.Item[UpperBound(this.Item)+1]=this.m_o_proc
+this.Item[UpperBound(this.Item)+1]=this.m_u_proc
+this.Item[UpperBound(this.Item)+1]=this.m_a_proc
+end on
+
+on m_proc.destroy
+call super::destroy
+destroy(this.m_o_proc)
+destroy(this.m_u_proc)
+destroy(this.m_a_proc)
+end on
+
+type m_o_proc from menu within m_proc
+end type
+
+on m_o_proc.create
+call super::create
+this.text = "SQL会话"
+this.enabled = false
+this.checked = true
+this.toolbaritemname = "Custom058!"
+this.toolbaritemtext = "锁/被锁进程"
+this.toolbaritemspace = 1
+end on
+
+on m_o_proc.destroy
+call super::destroy
+end on
+
+event clicked;if not isvalid(w_link) then return 
+w_link.wf_setsql(1)
+m_s.m_proc.m_o_proc.checked = true
+m_s.m_proc.m_u_proc.checked = false
+m_s.m_proc.m_a_proc.checked = false
+
+
+end event
+
+type m_u_proc from menu within m_proc
+end type
+
+on m_u_proc.create
+call super::create
+this.visible = false
+this.text = "活动进程"
+this.enabled = false
+this.toolbaritemvisible = false
+this.toolbaritemname = "Custom066!"
+this.toolbaritemtext = "活动进程"
+end on
+
+on m_u_proc.destroy
+call super::destroy
+end on
+
+event clicked;if not isvalid(w_link) then return 
+w_link.wf_setsql(2)
+m_s.m_proc.m_o_proc.checked = false
+m_s.m_proc.m_u_proc.checked = true
+m_s.m_proc.m_a_proc.checked = false
+end event
+
+type m_a_proc from menu within m_proc
+end type
+
+on m_a_proc.create
+call super::create
+this.visible = false
+this.text = "用户进程"
+this.enabled = false
+this.toolbaritemvisible = false
+this.toolbaritemname = "Custom093!"
+this.toolbaritemtext = "用户进程"
+end on
+
+on m_a_proc.destroy
+call super::destroy
+end on
+
+event clicked;if not isvalid(w_link) then return 
+w_link.wf_setsql(3)
+m_s.m_proc.m_o_proc.checked = false
+m_s.m_proc.m_u_proc.checked = false
+m_s.m_proc.m_a_proc.checked = true
+
+end event
+
+type m_trace from menu within m_s
+end type
+
+on m_trace.create
+call super::create
+this.visible = false
+this.text = "Sql跟踪"
+end on
+
+event clicked;//open(w_sqltrace)
+
+end event
+
+on m_trace.destroy
+call super::destroy
+end on
+
+type m_ from menu within m_s
+end type
+
+event clicked;//open(w_limit)
+
+end event
+
+on m_.create
+call super::create
+this.visible = false
+this.text = "限制"
+end on
+
+on m_.destroy
+call super::destroy
+end on
+
+type m_zdcs from menu within m_s
+end type
+
+on m_zdcs.create
+call super::create
+this.visible = false
+this.text = "中断测试"
+end on
+
+event clicked;open(w_zdcs)
+
+end event
+
+on m_zdcs.destroy
+call super::destroy
+end on
+
+type m_tsb from menu within m_s
+end type
+
+event clicked;//open(w_color)
+
+end event
+
+on m_tsb.create
+call super::create
+this.visible = false
+this.text = "调色板"
+end on
+
+on m_tsb.destroy
+call super::destroy
+end on
+
+type m_xxx from menu within m_s
+end type
+
+event clicked;sqlca.autocommit = false
+update GY_XTCS set CSZ = CSZ;
+
+end event
+
+on m_xxx.create
+call super::create
+this.visible = false
+this.text = "锁住GY_XTCS表"
+end on
+
+on m_xxx.destroy
+call super::destroy
+end on
+
+type m_- from menu within m_s
+end type
+
+on m_-.create
+call super::create
+this.text = "-"
+end on
+
+on m_-.destroy
+call super::destroy
+end on
+
+type m_exit from menu within m_s
+end type
+
+on m_exit.create
+call super::create
+this.text = "退出~tAlt+X"
+this.shortcut = 600
+this.toolbaritemname = "Exit!"
+this.toolbaritemtext = "退出"
+this.toolbaritemspace = 1
+end on
+
+event clicked;close(w_main)
+
+end event
+
+on m_exit.destroy
+call super::destroy
+end on
+
+type m_bshis from menu within m_main
+m_sswr m_sswr
+m_bcp m_bcp
+m_ch m_ch
+m_ypxx m_ypxx
+m_1 m_1
+end type
+
+on m_bshis.create
+call super::create
+this.visible = false
+this.text = "Bshis应用"
+this.m_sswr=create m_sswr
+this.m_bcp=create m_bcp
+this.m_ch=create m_ch
+this.m_ypxx=create m_ypxx
+this.m_1=create m_1
+this.Item[UpperBound(this.Item)+1]=this.m_sswr
+this.Item[UpperBound(this.Item)+1]=this.m_bcp
+this.Item[UpperBound(this.Item)+1]=this.m_ch
+this.Item[UpperBound(this.Item)+1]=this.m_ypxx
+this.Item[UpperBound(this.Item)+1]=this.m_1
+end on
+
+on m_bshis.destroy
+call super::destroy
+destroy(this.m_sswr)
+destroy(this.m_bcp)
+destroy(this.m_ch)
+destroy(this.m_ypxx)
+destroy(this.m_1)
+end on
+
+type m_sswr from menu within m_bshis
+end type
+
+event clicked;open(w_sswr)
+
+end event
+
+on m_sswr.create
+call super::create
+this.visible = false
+this.text = "四舍五入查询"
+end on
+
+on m_sswr.destroy
+call super::destroy
+end on
+
+type m_bcp from menu within m_bshis
+end type
+
+event clicked;string ls_sql
+
+ls_sql = "sp_sql " + string(1)
+execute immediate :ls_sql;
+//open(w_back)
+
+end event
+
+on m_bcp.create
+call super::create
+this.text = "生成bcp批"
+end on
+
+on m_bcp.destroy
+call super::destroy
+end on
+
+type m_ch from menu within m_bshis
+end type
+
+on m_ch.create
+call super::create
+this.visible = false
+this.text = "查核"
+end on
+
+event clicked;//open(w_check)
+
+end event
+
+on m_ch.destroy
+call super::destroy
+end on
+
+type m_ypxx from menu within m_bshis
+end type
+
+event clicked;opensheet(w_ypxx,w_main,1,Cascaded!)
+
+end event
+
+on m_ypxx.create
+call super::create
+this.visible = false
+this.text = "药品信息"
+end on
+
+on m_ypxx.destroy
+call super::destroy
+end on
+
+type m_1 from menu within m_bshis
+end type
+
+event clicked;open(w_yszk)
+
+end event
+
+on m_1.create
+call super::create
+this.visible = false
+this.text = "医生转科"
+end on
+
+on m_1.destroy
+call super::destroy
+end on
+
+type m_api from menu within m_main
+m_close m_close
+m_zywqh m_zywqh
+m_sndplay m_sndplay
+m_task m_task
+end type
+
+on m_api.create
+call super::create
+this.visible = false
+this.text = "Api应用"
+this.m_close=create m_close
+this.m_zywqh=create m_zywqh
+this.m_sndplay=create m_sndplay
+this.m_task=create m_task
+this.Item[UpperBound(this.Item)+1]=this.m_close
+this.Item[UpperBound(this.Item)+1]=this.m_zywqh
+this.Item[UpperBound(this.Item)+1]=this.m_sndplay
+this.Item[UpperBound(this.Item)+1]=this.m_task
+end on
+
+on m_api.destroy
+call super::destroy
+destroy(this.m_close)
+destroy(this.m_zywqh)
+destroy(this.m_sndplay)
+destroy(this.m_task)
+end on
+
+type m_close from menu within m_api
+end type
+
+event clicked;//open(w_close)
+
+end event
+
+on m_close.create
+call super::create
+this.text = "定时关机"
+end on
+
+on m_close.destroy
+call super::destroy
+end on
+
+type m_zywqh from menu within m_api
+end type
+
+event clicked;//open(w_srf)
+
+end event
+
+on m_zywqh.create
+call super::create
+this.visible = false
+this.text = "中英文切换"
+end on
+
+on m_zywqh.destroy
+call super::destroy
+end on
+
+type m_sndplay from menu within m_api
+end type
+
+event clicked;sndPlaySoundA ("warning.wav", waveOutGetNumDevs ())
+
+end event
+
+on m_sndplay.create
+call super::create
+this.visible = false
+this.text = "播放声音文件"
+end on
+
+on m_sndplay.destroy
+call super::destroy
+end on
+
+type m_task from menu within m_api
+end type
+
+event clicked;//open(w_task)
+
+end event
+
+on m_task.create
+call super::create
+this.visible = false
+this.text = "已打开的应用"
+end on
+
+on m_task.destroy
+call super::destroy
+end on
+
+type m_window from menu within m_main
+end type
+
+on m_window.create
+call super::create
+this.text = "窗口"
+this.mergeoption = windowmenu!
+end on
+
+on m_window.destroy
+call super::destroy
+end on
+

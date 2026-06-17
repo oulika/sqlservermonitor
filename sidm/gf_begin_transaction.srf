@@ -1,0 +1,10 @@
+global type gf_begin_transaction from function_object
+end type
+
+forward prototypes
+global subroutine gf_begin_transaction (ref transaction a_transaction)
+end prototypes
+
+global subroutine gf_begin_transaction (ref transaction a_transaction);a_transaction.autocommit = false
+end subroutine
+

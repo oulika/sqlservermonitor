@@ -1,0 +1,113 @@
+release 9;
+datawindow(units=0 timer_interval=0 color=1073741824 processing=1 HTMLDW=no print.printername="" print.documentname="" print.orientation = 0 print.margin.left = 110 print.margin.right = 110 print.margin.top = 96 print.margin.bottom = 96 print.paper.source = 0 print.paper.size = 0 print.canusedefaultprinter=yes print.prompt=no print.buttons=no print.preview.buttons=no print.cliptext=no print.overrideprintjob=no print.collate=yes hidegrayline=no grid.lines=0 selected.mouse=no )
+header(height=120 color="536870912" )
+summary(height=0 color="536870912" )
+footer(height=0 color="536870912" )
+detail(height=88 color="536870912" )
+table(column=(type=char(0) updatewhereclause=yes name=sysd dbname="sysd" )
+ column=(type=char(4000) updatewhereclause=yes name=sid_xs dbname="sid_xs" )
+ column=(type=char(16) updatewhereclause=yes name=gv$session_machine dbname="gv$session.machine" )
+ column=(type=char(64) updatewhereclause=yes name=gv$session_program dbname="gv$session.program" )
+ column=(type=char(30) updatewhereclause=yes name=gv$session_username dbname="gv$session.username" )
+ column=(type=char(128) updatewhereclause=yes name=dba_objects_object_name dbname="dba_objects.object_name" )
+ column=(type=char(26) updatewhereclause=yes name=lock_type dbname="lock_type" )
+ column=(type=char(64) updatewhereclause=yes name=gv$session_wait_class dbname="gv$session.wait_class" )
+ column=(type=number updatewhereclause=yes name=gv$session_seconds_in_wait dbname="gv$session.seconds_in_wait" )
+ column=(type=char(1000) updatewhereclause=yes name=gv$sqlarea_sql_text dbname="gv$sqlarea.sql_text" )
+ column=(type=char(161) updatewhereclause=yes name=kill_sql dbname="kill_sql" )
+ column=(type=char(1) updatewhereclause=yes name=bzxx dbname="bzxx" )
+ column=(type=char(40) updatewhereclause=yes name=sid dbname="sid" )
+ column=(type=number updatewhereclause=yes name=lv dbname="gv$session.lv" )
+ column=(type=number updatewhereclause=yes name=jlxh dbname="gv$session.jlxh" )
+ column=(type=number updatewhereclause=yes name=zh dbname="zh" )
+ retrieve="select '' sysd, 
+	lpad('└', 6 * (lv - 1)) || to_char(a.sid) || ',' || to_char(a.sess_serial#) sid_xs,
+	b.TERMINAL machine, b.PROGRAM, b.USERNAME, d.object_name, 
+	DECODE (f.TYPE,
+	      'MR', 'Media Recovery',
+	      'RT', 'Redo Thread',
+	      'UN', 'USER Name',
+	      'TX', 'Transaction',
+	      'TM', 'DML',
+	      'UL', 'PL/SQL USER LOCK',
+	      'DX', 'Distributed Xaction',
+	      'CF', 'Control FILE',
+	      'IS', 'Instance State',
+	      'FS', 'FILE SET',
+	      'IR', 'Instance Recovery',
+	      'ST', 'Disk SPACE Transaction',
+	      'TS', 'Temp Segment',
+	      'IV', 'Library Cache Invalidation',
+	      'LS', 'LOG START OR Switch',
+	      'RW', 'ROW Wait',
+	      'SQ', 'Sequence Number',
+	      'TE', 'Extend TABLE',
+	      'TT', 'Temp TABLE',
+	      f.TYPE
+	     ) lock_type,
+	b.WAIT_CLASS, b.SECONDS_IN_WAIT, e.sql_text, 
+	CASE 
+		WHEN a.blocker_instance IS NOT NULL THEN ''
+		ELSE 'alter system kill session ''' || a.sid || ',' || a.sess_serial# || ',@' || a.instance || ''' immediate' 
+	END as kill_sql, 
+	' ' BZXX, 
+	to_char(a.sid) sid,
+	a.lv,
+	a.JLXH, 0 ZH
+/*	a.instance, a.sid, a.sess_serial#,
+	a.blocker_instance, a.blocker_sid, a.blocker_sess_serial#*/
+FROM (select ROWNUM JLXH, a.* from 
+		(select instance, sid, sess_serial#, blocker_instance,
+			blocker_sid, blocker_sess_serial#, level lv,
+			num_waiters, blocker_chain_id
+		from v$wait_chains 
+			connect by prior sid = blocker_sid
+			and prior sess_serial# = blocker_sess_serial#
+			and prior instance = blocker_instance
+			start with blocker_is_valid = 'FALSE' 
+		) a
+		where num_waiters > 0 or blocker_sid is not null
+	) a
+	INNER JOIN gV$SESSION b ON b.sid = a.sid AND b.serial# = a.sess_serial# AND b.inst_id = a.instance
+	LEFT JOIN gv$locked_object c ON c.session_id = b.sid AND c.inst_id = b.inst_id
+	LEFT JOIN dba_objects d ON c.object_id = d.object_id
+	LEFT JOIN gV$SQLAREA e ON e.HASH_VALUE = b.SQL_HASH_VALUE AND e.inst_id = b.inst_id
+	LEFT JOIN gv$lock f ON f.block = 1 AND f.sid = a.sid AND f.inst_id = b.inst_id
+ORDER BY a.JLXH
+" )
+text(band=header alignment="2" text="持续/
+等待(秒)" border="0" color="0" x="4910" y="4" height="112" width="238" html.valueishtml="0"  name=gv$session_seconds_in_wait_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="时间" border="0" color="33554432" x="55" y="36" height="56" width="256" html.valueishtml="0"  name=sysd_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+text(band=header alignment="2" text="会话树" border="0" color="0" x="357" y="36" height="56" width="690" html.valueishtml="0"  name=sid_xs_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="客户端" border="0" color="0" x="1056" y="36" height="56" width="562" html.valueishtml="0"  name=gv$session_machine_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="应用" border="0" color="0" x="1627" y="36" height="56" width="919" html.valueishtml="0"  name=gv$session_program_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="登录用户" border="0" color="0" x="2555" y="36" height="56" width="535" html.valueishtml="0"  name=gv$session_username_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="对象" border="0" color="0" x="3099" y="36" height="56" width="594" html.valueishtml="0"  name=dba_objects_object_name_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="锁类型" border="0" color="0" x="3703" y="36" height="56" width="608" html.valueishtml="0"  name=lock_type_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="等待类型" border="0" color="0" x="4320" y="36" height="56" width="581" html.valueishtml="0"  name=gv$session_wait_class_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="执行的SQL" border="0" color="0" x="5189" y="36" height="56" width="1509" html.valueishtml="0"  name=gv$sqlarea_sql_text_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="结束进程语法" border="0" color="0" x="7173" y="36" height="56" width="1394" html.valueishtml="0"  name=kill_sql_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+text(band=header alignment="2" text="备注信息" border="0" color="0" x="6706" y="36" height="56" width="457" html.valueishtml="0"  name=bzxx_t visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="16777215" )
+compute(band=detail alignment="0" expression="''"border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="320" y="16" height="64" width="27" format="[GENERAL]" html.valueishtml="0"  name=c_fgf visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=1 alignment="2" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="55" y="16" height="64" width="256" format="[general]" html.valueishtml="0"  name=sysd visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=2 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="357" y="16" height="64" width="690" format="[general]" html.valueishtml="0"  name=sid_xs visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=3 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="1056" y="16" height="64" width="562" format="[general]" html.valueishtml="0"  name=gv$session_machine visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=4 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="1627" y="16" height="64" width="919" format="[general]" html.valueishtml="0"  name=gv$session_program visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=5 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="2555" y="16" height="64" width="535" format="[general]" html.valueishtml="0"  name=gv$session_username visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=6 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="3099" y="16" height="64" width="594" format="[general]" html.valueishtml="0"  name=dba_objects_object_name visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=7 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="3703" y="16" height="64" width="608" format="[general]" html.valueishtml="0"  name=lock_type visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=8 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="4320" y="16" height="64" width="581" format="[general]" html.valueishtml="0"  name=gv$session_wait_class visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=9 alignment="1" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="4910" y="16" height="64" width="238" format="[general]" html.valueishtml="0"  name=gv$session_seconds_in_wait visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=10 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="5189" y="16" height="64" width="1509" format="[general]" html.valueishtml="0"  name=gv$sqlarea_sql_text visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=11 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="7173" y="16" height="64" width="1394" format="[general]" html.valueishtml="0"  name=kill_sql visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=12 alignment="0" tabsequence=32766 border="0" color="33554432~tif(lv = 1, rgb(0, 0, 255), 255)" x="6706" y="16" height="64" width="457" format="[general]" html.valueishtml="0"  name=bzxx visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+compute(band=detail alignment="0" expression="''"border="0" color="33554432" x="5157" y="16" height="64" width="23" format="[GENERAL]" html.valueishtml="0"  name=compute_1 visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="1" background.color="536870912" )
+column(band=detail id=16 alignment="0" tabsequence=32766 border="0" color="0~tif(mod(zh, 2) = 0, RGB(255,201,69), RGB(62,125,202))" x="9" y="0" height="84" width="37" format="[general]" html.valueishtml="0"  name=zh visible="1" edit.limit=0 edit.case=any edit.focusrectangle=no edit.autoselect=no edit.imemode=0  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="0" background.color="65280~tif(mod(zh, 2) = 0, RGB(255,201,69), RGB(62,125,202))" )
+compute(band=summary alignment="0" expression="max(zh)"border="0" color="0" x="55" y="116" height="56" width="256" format="[General]" html.valueishtml="0"  name=c_maxzh visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="65280" )
+compute(band=summary alignment="0" expression="min(zh)"border="0" color="0" x="9" y="56" height="56" width="37" format="[GENERAL]" html.valueishtml="0"  name=c_minzh visible="1"  font.face="宋体" font.height="-9" font.weight="400"  font.family="0" font.pitch="2" font.charset="134" background.mode="2" background.color="65280" )
+htmltable(border="1" )
+htmlgen(clientevents="1" clientvalidation="1" clientcomputedfields="1" clientformatting="0" clientscriptable="0" generatejavascript="1" encodeselflinkargs="1" netscapelayers="0" )
+export.xml(headgroups="1" includewhitespace="0" metadatatype=0 savemetadata=0 )
+import.xml()
+export.pdf(method=0 distill.custompostscript="0" xslfop.print="0" )
+ 
