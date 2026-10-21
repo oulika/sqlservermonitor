@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "sidm-monitor"
 version = "0.1.0"
-description = "wxPython SQL Server blocking session monitor translated from PowerBuilder SIDM."
+description = "wxPython desktop monitor for SQL Server blocking sessions."
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [

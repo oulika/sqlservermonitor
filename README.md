@@ -1,6 +1,6 @@
 # SIDM SQL Server Monitor
 
-Python/wxPython rewrite of the PowerBuilder SQL Server blocking-session monitor exported under `sidm`.
+Python/wxPython desktop monitor for SQL Server blocking sessions.
 
 ## 功能
 
